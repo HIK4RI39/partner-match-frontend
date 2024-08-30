@@ -1,8 +1,14 @@
 <script setup lang="ts">
 import {ref} from "vue";
+import {useRouter} from 'vue-router'
+const router = useRouter()
 
+// 搜索文本
 const searchText = ref('');
 
+/**
+ * 搜索标签
+ */
 const onSearch = () => {
   tagList.value = originalTagList.map(parentTag => {
     const tempChildren = [...parentTag.children];
@@ -11,18 +17,38 @@ const onSearch = () => {
     return tempParentTag;
   })};
 
+/**
+ * 清空标签搜索
+ */
 const onCancel = () => {
   searchText.value = ''
   tagList.value = originalTagList
 };
 
-//关闭标签
+/**
+ * 关闭标签
+ * @param tag
+ */
 const doClose = (tag : any) => {
   //选中的tag返回false => 从activeIds中移除此tag
   activeIds.value = activeIds.value.filter(item => {
     return item !== tag;
   })
 };
+
+/**
+ * 根据标签搜索
+ */
+const doSearchResult = () => {
+  //将参数传递给搜索页
+  router.push({
+    path: '/user/list',
+    query: {
+      tags: activeIds.value
+    }
+  })
+
+}
 
 const activeIds = ref([]);
 const activeIndex = ref(0);
@@ -53,8 +79,6 @@ const originalTagList = [
 ];
 
 let tagList = ref(originalTagList);
-
-
 </script>
 
 <template>
@@ -88,8 +112,9 @@ let tagList = ref(originalTagList);
       :items="tagList"
   />
 
-
-
+  <div style="padding: 12px">
+    <van-button block type="primary" @click="doSearchResult">搜索</van-button>
+  </div>
 </template>
 
 <style scoped>
