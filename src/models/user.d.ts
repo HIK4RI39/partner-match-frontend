@@ -8,6 +8,7 @@ export type UserType = {
     email?: string;
     userStatus: number;
     userRole: number;
-    tags: string[];
+    tags?: string[];
     createTime: Date;
+    profile?: string;
 };

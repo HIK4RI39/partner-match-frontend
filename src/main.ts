@@ -6,6 +6,7 @@ import 'vant/lib/index.css';
 import * as VueRouter from 'vue-router';
 import routes from "./config/route.ts";
 
+
 const router = VueRouter.createRouter({
     history: VueRouter.createWebHashHistory(),
     routes: routes
@@ -14,5 +15,6 @@ const router = VueRouter.createRouter({
 const app = createApp(App);
 app.use(Vant);
 app.use(router);
+
 app.mount('#app')
 
