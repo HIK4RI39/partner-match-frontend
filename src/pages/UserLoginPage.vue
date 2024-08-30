@@ -30,6 +30,9 @@
 import {ref} from "vue";
 import myAxios from "../plugins/myAxios.ts";
 import {showToast} from "vant";
+import {useRouter} from 'vue-router'
+import {BaseResponse} from "../models/baseResponse";
+const router = useRouter()
 
 const userAccount = ref('');
 const userPassword = ref('');
@@ -37,17 +40,20 @@ const userPassword = ref('');
 
 
   const onSubmit =(async () => {
-    const res = await myAxios.post('/user/login',{
+    const res = <BaseResponse> await myAxios.post('/user/login',{
       //.value
       userAccount: userAccount.value,
       userPassword: userPassword.value
     })
 
-    if(res?.data?.code === 0){
+    if(res?.code === 0){
       showToast("登陆成功!");
-      sessionStorage.setItem("authorization", res?.data?.data);
+      sessionStorage.setItem("authorization", res?.data);
+      setTimeout(() => {
+        router.replace('/');
+      }, 1000);
     }else{
-      showToast(res?.data?.errorMsg);
+      showToast(res?.errorMsg);
     }
 
     return res;
