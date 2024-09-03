@@ -1,19 +1,21 @@
 <template>
-  <van-card
-      v-for="user in userList"
-      :title="`${user.username} (${user.userAccount})`"
-      :thumb="user.avatarUrl"
-      :tag="user.id"
-  >
-    <template #tags>
-      <van-tag plain type="danger" v-for="tag in user.tags" style="margin-right: 8px">
-        {{ tag }}
-      </van-tag>
-    </template>
-    <template #footer>
-      <van-button size="mini">联系我</van-button>
-    </template>
-  </van-card>
+  <div id="content">
+    <van-card
+        v-for="user in userList"
+        :title="`${user.username} (${user.userAccount})`"
+        :thumb="user.avatarUrl"
+        :tag="user.id"
+    >
+      <template #tags>
+        <van-tag plain type="danger" v-for="tag in user.tags" style="margin-right: 8px">
+          {{ tag }}
+        </van-tag>
+      </template>
+      <template #footer>
+        <van-button size="mini">联系我</van-button>
+      </template>
+    </van-card>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -29,5 +31,7 @@ const props = withDefaults(defineProps<UserCardListProps>(), {
 </script>
 
 <style scoped>
-
+#content {
+  padding-bottom: 100px;
+}
 </style>
