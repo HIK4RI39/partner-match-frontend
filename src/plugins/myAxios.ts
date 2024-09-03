@@ -20,7 +20,15 @@ myAxios.interceptors.request.use(function (config){
 
 // 响应拦截器
 myAxios.interceptors.response.use(function(response){
-    // console.log("收到相应: ", response)
+
+    if(response?.data?.code === 40100){
+        //TODO 保存当前页面为路径参数
+        //const path = window.location.pathname;
+
+
+        //跳转到登录页
+        window.location.href = '/user/login';
+    }
     return response?.data;
 
 }, function (error) {

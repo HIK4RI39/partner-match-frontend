@@ -29,10 +29,10 @@ onMounted(async () => {
     showToast("获取用户信息成功");
   }else{
     showToast("用户未登录");
-    //跳转登录页
-    setTimeout(() => {
-      router.replace('/user/login');
-    }, 500);
+    // //跳转登录页
+    // setTimeout(() => {
+    //   router.replace('/user/login');
+    // }, 500);
   }
 })
 

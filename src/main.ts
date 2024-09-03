@@ -8,7 +8,9 @@ import routes from "./config/route.ts";
 
 
 const router = VueRouter.createRouter({
-    history: VueRouter.createWebHashHistory(),
+    //哈希路由
+    // history: VueRouter.createWebHashHistory(),
+    history: VueRouter.createWebHistory(),
     routes: routes
 })
 
