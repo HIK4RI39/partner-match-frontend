@@ -4,8 +4,6 @@
   />
   <van-empty v-if="!userList || userList.length<1" description="搜索结果为空"/>
 
-
-
   <van-pagination
       v-model="currentPage"
       :total-items="total"
