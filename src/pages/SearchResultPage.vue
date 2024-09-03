@@ -4,6 +4,31 @@
   />
   <van-empty v-if="!userList || userList.length<1" description="搜索结果为空"/>
 
+
+
+  <van-pagination
+      v-model="currentPage"
+      :total-items="total"
+      :show-page-size="pageSize"
+      :page-count="Math.ceil(total/pageSize)"
+      @change="doResearch"
+      force-ellipses
+      style="
+          position: fixed; bottom: 0;
+          padding: 50px;
+          width: 100%;
+          text-align: center;"
+  >
+    <template #prev-text>
+      <van-icon name="arrow-left" />
+    </template>
+
+    <template #next-text>
+      <van-icon name="arrow" />
+    </template>
+
+    <template #page="{ text }">{{ text }}</template>
+  </van-pagination>
 </template>
 
 <script setup lang="ts">
@@ -35,12 +60,19 @@ const {tags} = route.query;
 
 const userList:Ref<UserType[]> = ref([]);
 
+const currentPage = ref(  1);
+const total = ref(50);
+const pageSize = ref(10);
+
 onMounted(async () => {
   // 为给定 ID 的 user 创建请求
   const userListData = await myAxios.get('/user/search/tags', {
     withCredentials: false,
     params: {
-      tagNameList: tags
+      tagNameList: tags,
+      currentPage: currentPage.value,
+      total: total.value,
+      pageSize: pageSize.value
 },
     paramsSerializer: {
       serialize: params => qs.stringify(params, { indices: false}),
@@ -55,12 +87,13 @@ onMounted(async () => {
         showToast('请求失败');
       });
   if (userListData) {
-    userListData.forEach((user:UserType) => {
+    userListData.list.forEach((user:UserType) => {
       if (user.tags) {
         user.tags = JSON.parse(user.tags);
       }
     })
-    userList.value = userListData;
+    userList.value = userListData.list;
+    total.value = userListData.total;
   }
 })
 
