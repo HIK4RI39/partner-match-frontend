@@ -1,31 +1,19 @@
 <template>
-  <van-card
-      v-for="user in userList"
-      :desc="user.profile"
-      :title="`${user.username} (${user.userAccount})`"
-      :thumb="user.avatarUrl"
-      :tag="user.id"
-  >
-    <template #tags>
-      <van-tag plain type="danger" v-for="tag in user.tags" style="margin-right: 8px">
-        {{ tag }}
-      </van-tag>
-    </template>
-    <template #footer>
-      <van-button size="mini">联系我</van-button>
-    </template>
-  </van-card>
-
+  <user-card-list
+      :user-list="userList"
+  />
   <van-empty v-if="!userList || userList.length<1" description="搜索结果为空"/>
 
 </template>
 
 <script setup lang="ts">
-import {onMounted, ref} from "vue";
+import {onMounted, Ref, ref} from "vue";
 import myAxios from '../plugins/myAxios';
 import qs from 'qs';
 import {useRoute} from 'vue-router'
 import {showToast} from "vant";
+import {UserType} from "../models/user";
+import UserCardList from "../components/user-card-list.vue";
 
 const route = useRoute()
 const {tags} = route.query;
@@ -45,15 +33,14 @@ const {tags} = route.query;
 //     profile: '个人信息',
 //   };
 
-const userList = ref([]);
+const userList:Ref<UserType[]> = ref([]);
 
 onMounted(async () => {
   // 为给定 ID 的 user 创建请求
   const userListData = await myAxios.get('/user/search/tags', {
     withCredentials: false,
     params: {
-      tagNameList: /*JSON.stringify(tags)*/ tags
-
+      tagNameList: tags
 },
     paramsSerializer: {
       serialize: params => qs.stringify(params, { indices: false}),
@@ -68,7 +55,7 @@ onMounted(async () => {
         showToast('请求失败');
       });
   if (userListData) {
-    userListData.forEach(user => {
+    userListData.forEach((user:UserType) => {
       if (user.tags) {
         user.tags = JSON.parse(user.tags);
       }

@@ -29,6 +29,7 @@ myAxios.interceptors.response.use(function(response){
         //跳转到登录页
         window.location.href = '/user/login';
     }
+
     return response?.data;
 
 }, function (error) {

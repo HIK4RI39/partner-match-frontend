@@ -47,7 +47,6 @@ const doSearchResult = () => {
       tags: activeIds.value
     }
   })
-
 }
 
 const activeIds = ref([]);
@@ -103,7 +102,6 @@ let tagList = ref(originalTagList);
     </van-col>
 
   </van-row>
-
 
   <van-divider content-position="left">选择标签</van-divider>
   <van-tree-select class="tree-select"
