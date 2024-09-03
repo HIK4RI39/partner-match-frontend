@@ -1,7 +1,7 @@
 <template>
   <div>
     <van-nav-bar
-        title="标题"
+        :title=title
         left-text="返回"
         left-arrow
         @click-left="onClickLeft"
@@ -33,13 +33,30 @@
 import {ref} from 'vue';
 import {showToast} from "vant";
 import {useRouter} from 'vue-router'
+import routes from "../config/route.ts";
 const router = useRouter()
 
 const onClickLeft = () => history.back();
 const onClickRight = () => router.push('/search');
-
 const active = ref('index');
 const onChange = (index: any) => showToast(`标签 ${index}`);
+
+const DEFAULT_TITLE = '伙伴匹配';
+const title = ref(DEFAULT_TITLE);
+
+//监听路由变化, 动态显示标题
+router.beforeEach((to,from,next)=>{//beforeEach是router的钩子函数，在进入路由前执行
+  const toPath = to.path;
+
+  const route = routes.find((route) => {
+    return toPath == route.path;
+  })
+
+  title.value = route?.title ?? DEFAULT_TITLE;
+
+  next()  //执行进入路由，如果不写就不会进入目标页
+})
+
 </script>
 
 <style scoped>

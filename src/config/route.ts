@@ -8,13 +8,13 @@ import UserLoginPage from "../pages/UserLoginPage.vue";
 
 
 const routes = [
-    {path: '/', component: Index},
-    {path: '/team', component: Team},
-    {path: '/user', component: User},
-    {path: '/search', component: Search},
-    {path: '/user/edit', component: UserEdit},
-    {path: '/user/list', component: SearchResultPage},
-    {path: '/user/login', component: UserLoginPage},
+    {path: '/', title: '主页', component: Index},
+    {path: '/team', title: '组队',  component: Team},
+    {path: '/user', title: '个人页',  component: User},
+    {path: '/search', title: '搜索',  component: Search},
+    {path: '/user/edit', title: '信息编辑',  component: UserEdit},
+    {path: '/user/list', title: '搜索列表',  component: SearchResultPage},
+    {path: '/user/login', title: '用户登录',  component: UserLoginPage},
 ]
 
 export default routes
