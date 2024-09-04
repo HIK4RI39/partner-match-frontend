@@ -1,6 +1,26 @@
 <template>
 
   <div id="content">
+    <van-dialog
+        v-model:show="show"
+        title="加入队伍"
+        show-cancel-button
+        @confirm="doJoin"
+        @cancel="handleCancel()"
+    >
+      <van-form ref="formData">
+        <van-field
+            v-model="formData.password"
+            required
+            label="密码"
+            input-align="left"
+            placeholder="请输入队伍密码"
+        />
+      </van-form>
+    </van-dialog>
+
+
+
     <van-card
         v-for="team in teamList"
         :title="`${team.title}`"
@@ -9,11 +29,10 @@
         :thumb="team.avatarUrl"
     >
       <template #footer>
-        <van-button size="mini" type="danger" v-if="team.userId===user.id" @click="handleDelete(team)">删除队伍</van-button>
-
-        <van-button size="mini" type="warning">退出队伍</van-button>
+        <van-button size="mini" type="danger" v-if="team.showDelete" @click="handleDelete(team)">删除队伍</van-button>
         <van-button size="mini" type="success">查看详情</van-button>
-        <van-button size="mini" type="primary">加入队伍</van-button>
+        <van-button size="mini" type="warning" v-if="team.showQuit" @click="hanleQuit(team)">退出队伍</van-button>
+        <van-button size="mini" type="primary" v-if="team.showJoin" @click="handleJoin(team.id)">加入队伍</van-button>
       </template>
     </van-card>
 
@@ -51,6 +70,7 @@ import myAxios from "../plugins/myAxios.ts";
 import {showConfirmDialog,showToast} from "vant";
 import {UserType} from "../models/user";
 import {GetCurrentUser} from "../services/user.ts";
+import {BaseResponse} from "../models/baseResponse";
 
 const teamList:Ref<TeamType[]> = ref([]);
 
@@ -58,6 +78,15 @@ const currentPage = ref(  1);
 const total = ref(50);
 const user:UserType = ref();
 const pageSize = ref(10);
+const show = ref(false);
+
+
+const formData = ref(
+    {
+      password: '',
+      id: 0
+    }
+);
 
 const handleDelete = (team:TeamType) => {
   showConfirmDialog({
@@ -73,6 +102,35 @@ const handleDelete = (team:TeamType) => {
         // on cancel
       });
 };
+
+const hanleQuit = async (team:TeamType) => {
+  await myAxios.post("/team/quit", team)
+      .then((res:BaseResponse) => {
+        if(res.code === 0){
+          location.reload();
+        }
+      })
+}
+
+const handleJoin = (id:number) => {
+  show.value = true;
+  formData.value.id = id;
+}
+
+const doJoin = async () => {
+  await myAxios.post("/team/join", formData.value)
+      .then((res:BaseResponse) => {
+        if(res.code === 0){
+          location.reload();
+        }
+      })
+}
+
+const handleCancel = () => {
+  show.value = false;
+  formData.value.password = '';
+}
+
 
 const doSearch = async () => {
   const userListData = await myAxios.get('/team/list', {

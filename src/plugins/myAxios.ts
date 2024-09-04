@@ -1,4 +1,5 @@
 import axios from "axios";
+import {showToast} from "vant";
 
 const myAxios = axios.create({
     baseURL: '/api'
@@ -25,9 +26,11 @@ myAxios.interceptors.response.use(function(response){
         //TODO 保存当前页面为路径参数
         //const path = window.location.pathname;
 
-
         //跳转到登录页
         window.location.href = '/user/login';
+    }
+    if(response?.data?.code !== 0){
+        showToast(response.data.errorMsg);
     }
 
     return response?.data;

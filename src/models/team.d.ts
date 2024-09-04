@@ -8,6 +8,9 @@ export type TeamType = {
     number: number;
     description?: string;
     createTime: Date;
-
     userId: number;
+
+    showQuit: boolean;
+    showDelete: boolean;
+    showJoin: boolean;
 };
