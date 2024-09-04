@@ -1,11 +1,18 @@
 <template>
 
   <div id="content">
+    <van-search
+        v-model="searchText"
+        show-action
+        placeholder="请输入搜索关键词/按下enter检索队伍"
+        @search="onSearch"
+        @cancel="onCancel"
+    />
+
     <van-dialog
         v-model:show="show"
         title="加入队伍"
         show-cancel-button
-        readonly=""
         @confirm="doJoin"
         @cancel="handleCancel()"
     >
@@ -36,13 +43,13 @@
       </template>
       <template #footer>
         <van-button size="small" type="danger" v-if="team.showDelete" @click="handleDelete(team)">删除队伍</van-button>
-<!--        <van-button size="small" type="success">查看详情</van-button>-->
+        <!--        <van-button size="small" type="success">查看详情</van-button>-->
         <van-button size="small" type="warning" v-if="team.showQuit" @click="hanleQuit(team)">退出队伍</van-button>
         <van-button size="small" type="primary" v-if="team.showJoin" @click="handleJoin(team)">加入队伍</van-button>
       </template>
     </van-card>
 
-
+    <van-empty v-if="!teamList || teamList.length<1" description="没有符合条件的队伍"/>
   </div>
   <van-pagination
       v-model="currentPage"
@@ -85,6 +92,31 @@ const total = ref(50);
 const user:UserType = ref();
 const pageSize = ref(10);
 const show = ref(false);
+const searchText = ref('');
+
+const onSearch = async () => {
+  const teamListData = await myAxios.get('/team/search', {
+    withCredentials: false,
+    params: {
+      searchText: searchText.value,
+      currentPage: currentPage.value
+    }}).then(function (response) {
+    // showToast('请求成功');
+    return response?.data;
+  })
+      .catch(function (error) {
+        console.log('/user/search/tags error', error);
+        showToast('请求失败');
+      });
+  if (teamListData) {
+    teamList.value = teamListData.list;
+    total.value = teamListData.total;
+  }
+}
+
+const onCancel = () => {
+  searchText.value = '';
+}
 
 
 const formData = ref(
@@ -101,14 +133,20 @@ const handleDelete = (team:TeamType) => {
     message: "确认删除该队伍吗? 删除后无法恢复"
   })
       .then(() => {
-        myAxios.post("/team/delete", team)}
-      ).then((res:BaseResponse) => {
-        if(res?.data===0){
-          location.reload()        }
-      }
-      ).catch(() => {
-        // on cancel
-      });
+        myAxios.post("/team/delete", team).then((res:BaseResponse) => {
+          console.log(res)
+          if(res?.code===0){
+            console.log(res?.code)
+            showToast("删除成功!");
+            //跳转url
+            setTimeout(() => {
+              location.reload();
+            }, 1000);
+          }
+        }).catch(() => {
+          // on cancel
+        });}
+      )
 };
 
 const hanleQuit = async (team:TeamType) => {
@@ -117,12 +155,17 @@ const hanleQuit = async (team:TeamType) => {
     message: "确认退出队伍吗?"
   }).then(() => {
     myAxios.post("/team/quit", team).then((res:BaseResponse) => {
-      if(res.code === 0){
-        location.reload();
-      }}).catch(() => {
-    // on cancel
-  })}
-)};
+      if(res?.code===0){
+        showToast("退出队伍成功");
+        //跳转url
+        setTimeout(() => {
+          location.reload();
+        }, 1000);
+      }
+    }).catch(() => {
+      // on cancel
+    })}
+  )};
 
 const handleJoin = (team:TeamType) => {
   show.value = true;
@@ -151,7 +194,7 @@ const handleCancel = () => {
 
 
 const doSearch = async () => {
-  const userListData = await myAxios.get('/team/list', {
+  const teamListData = await myAxios.get('/team/list', {
     withCredentials: false,
     params: {
       currentPage: currentPage.value
@@ -164,14 +207,9 @@ const doSearch = async () => {
         console.log('/user/search/tags error', error);
         showToast('请求失败');
       });
-  if (userListData) {
-    userListData.list.forEach((user:UserType) => {
-      if (user.tags) {
-        user.tags = JSON.parse(user.tags);
-      }
-    })
-    teamList.value = userListData.list;
-    total.value = userListData.total;
+  if (teamListData) {
+    teamList.value = teamListData.list;
+    total.value = teamListData.total;
   }
 }
 
