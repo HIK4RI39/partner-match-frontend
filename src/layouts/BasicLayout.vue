@@ -31,7 +31,6 @@
 
 <script setup lang="ts">
 import {ref} from 'vue';
-import {showToast} from "vant";
 import {useRouter} from 'vue-router'
 import routes from "../config/route.ts";
 const router = useRouter()
@@ -39,7 +38,6 @@ const router = useRouter()
 const onClickLeft = () => history.back();
 const onClickRight = () => router.push('/search');
 const active = ref('index');
-const onChange = (index: any) => showToast(`标签 ${index}`);
 
 const DEFAULT_TITLE = '伙伴匹配';
 const title = ref(DEFAULT_TITLE);

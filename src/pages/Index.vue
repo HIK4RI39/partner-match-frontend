@@ -21,8 +21,7 @@ const doResearch = async () => {
         }
       }
   ).then(function (response) {
-    console.log('/user/search/tags succeed', response);
-    showToast('请求成功');
+    // showToast('请求成功');
     return response?.data;
   })
       .catch(function (error) {

@@ -13,4 +13,5 @@ export type TeamType = {
     showQuit: boolean;
     showDelete: boolean;
     showJoin: boolean;
+    members: number;
 };

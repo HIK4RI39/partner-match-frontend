@@ -110,7 +110,11 @@ let tagList = ref(originalTagList);
       :items="tagList"
   />
 
-  <div style="padding: 12px">
+  <div style="
+          padding: 12px;
+          position: fixed; bottom: 50px;
+          width: 100%;
+          text-align: center;">
     <van-button block type="primary" @click="doSearchResult">搜索</van-button>
   </div>
 </template>

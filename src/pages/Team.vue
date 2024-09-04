@@ -5,6 +5,7 @@
         v-model:show="show"
         title="加入队伍"
         show-cancel-button
+        readonly=""
         @confirm="doJoin"
         @cancel="handleCancel()"
     >
@@ -15,6 +16,7 @@
             label="密码"
             input-align="left"
             placeholder="请输入队伍密码"
+            v-if="formData?.team?.status==1"
         />
       </van-form>
     </van-dialog>
@@ -23,16 +25,20 @@
 
     <van-card
         v-for="team in teamList"
-        :title="`${team.title}`"
+        :title="`${team.title}    (${team.members}/${team.number})`"
         :desc="`${team.description}(有效期至:${team.expireTime})`"
         :tag="`${team.number}人`"
         :thumb="team.avatarUrl"
     >
+      <template #tags>
+        <van-tag plain type="primary" v-if="team.status===0">公开</van-tag>
+        <van-tag plain type="danger" v-if="team.status===1">加密</van-tag>
+      </template>
       <template #footer>
-        <van-button size="mini" type="danger" v-if="team.showDelete" @click="handleDelete(team)">删除队伍</van-button>
-        <van-button size="mini" type="success">查看详情</van-button>
-        <van-button size="mini" type="warning" v-if="team.showQuit" @click="hanleQuit(team)">退出队伍</van-button>
-        <van-button size="mini" type="primary" v-if="team.showJoin" @click="handleJoin(team.id)">加入队伍</van-button>
+        <van-button size="small" type="danger" v-if="team.showDelete" @click="handleDelete(team)">删除队伍</van-button>
+<!--        <van-button size="small" type="success">查看详情</van-button>-->
+        <van-button size="small" type="warning" v-if="team.showQuit" @click="hanleQuit(team)">退出队伍</van-button>
+        <van-button size="small" type="primary" v-if="team.showJoin" @click="handleJoin(team)">加入队伍</van-button>
       </template>
     </van-card>
 
@@ -84,7 +90,8 @@ const show = ref(false);
 const formData = ref(
     {
       password: '',
-      id: 0
+      id: 0,
+      team: ref() as Ref<TeamType>,
     }
 );
 
@@ -95,8 +102,9 @@ const handleDelete = (team:TeamType) => {
   })
       .then(() => {
         myAxios.post("/team/delete", team)}
-      ).then(res => {
-        location.reload()
+      ).then((res:BaseResponse) => {
+        if(res?.data===0){
+          location.reload()        }
       }
       ).catch(() => {
         // on cancel
@@ -104,24 +112,34 @@ const handleDelete = (team:TeamType) => {
 };
 
 const hanleQuit = async (team:TeamType) => {
-  await myAxios.post("/team/quit", team)
-      .then((res:BaseResponse) => {
-        if(res.code === 0){
-          location.reload();
-        }
-      })
-}
+  showConfirmDialog({
+    title: "退队提示",
+    message: "确认退出队伍吗?"
+  }).then(() => {
+    myAxios.post("/team/quit", team).then((res:BaseResponse) => {
+      if(res.code === 0){
+        location.reload();
+      }}).catch(() => {
+    // on cancel
+  })}
+)};
 
-const handleJoin = (id:number) => {
+const handleJoin = (team:TeamType) => {
   show.value = true;
-  formData.value.id = id;
+  formData.value.team = team;
+  formData.value.id = team.id;
 }
 
 const doJoin = async () => {
   await myAxios.post("/team/join", formData.value)
       .then((res:BaseResponse) => {
         if(res.code === 0){
-          location.reload();
+          showToast("加入成功")
+
+          setTimeout(() => {
+            location.reload();
+          }, 1000);
+
         }
       })
 }
@@ -139,8 +157,7 @@ const doSearch = async () => {
       currentPage: currentPage.value
     },
   }).then(function (response) {
-    console.log('/user/search/tags succeed', response);
-    showToast('请求成功');
+    // showToast('请求成功');
     return response?.data;
   })
       .catch(function (error) {
@@ -162,7 +179,6 @@ onMounted(async () => {
   const res = await GetCurrentUser();
   if(res){
     user.value = res;
-    showToast("获取用户信息成功");
   }else {
     showToast("用户未登录");
   }
@@ -174,7 +190,7 @@ onMounted(async () => {
 
 <style scoped>
 #content {
-  padding-bottom: 100px;
+  padding-bottom: 150px;
 }
 </style>
 
