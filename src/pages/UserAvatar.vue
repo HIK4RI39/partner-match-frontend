@@ -36,8 +36,7 @@ const fileList = ref([
   }
 ]);
 
-const onOversize = (file) => {
-  console.log(file);
+const onOversize = () => {
   showToast('文件大小不能超过 500kb');
 };
 
@@ -58,7 +57,6 @@ const afterRead = async (file) => {
   file.status = 'done';
   await myAxios.post("/upload", forms).then((res:BaseResponse) => {
     if(res?.code===0){
-      console.log(res)
       file.status = 'done';
       url = res.data;
     }else{

@@ -2,9 +2,10 @@
   <div id="content">
     <van-card
         v-for="user in userList"
-        :title="`${user.username} (${user.userAccount})`"
+        :title="`${user.username}`"
         :thumb="user.avatarUrl"
         :tag="user.id"
+        :desc="user.profile ? user.profile : '此用户没有填写个人简介'"
     >
       <template #tags>
         <van-tag plain type="danger" v-for="tag in user.tags" style="margin-right: 8px">

@@ -35,7 +35,6 @@ const doResearch = async () => {
         user.tags = JSON.parse(user.tags);
       }
     })
-    console.log("userListData: ",userListData);
     userList.value = userListData.list;
     total.value = userListData.total;
   }

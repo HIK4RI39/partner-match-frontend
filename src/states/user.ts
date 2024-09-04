@@ -27,6 +27,9 @@ const updateCurrentUser = (editKey :string, currentValue : string)  => {
         case 'avatarUrl':
             currentUser.avatarUrl = currentValue;
             return;
+        case 'profile':
+            currentUser.profile =currentValue;
+            return;
     }
 }
 
