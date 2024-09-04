@@ -16,11 +16,11 @@
           label="队伍简介"
       />
 
-      <van-field name="number" label="队伍人数">
-        <template #input>
-          <van-stepper v-model="number" />
-        </template>
-      </van-field>
+<!--      <van-field name="number" label="队伍人数">-->
+<!--        <template #input>-->
+<!--          <van-stepper v-model="number" />-->
+<!--        </template>-->
+<!--      </van-field>-->
 
       <van-field name="status" label="队伍可见性">
         <template #input>
@@ -45,6 +45,7 @@
           label="队伍密码"
           v-if="withPWD"
       />
+
 
       <van-field
           v-model="expireTime"
@@ -74,19 +75,25 @@ import {ref} from "vue";
 import {showConfirmDialog, showToast} from "vant";
 import myAxios from "../plugins/myAxios.ts";
 import {BaseResponse} from "../models/baseResponse";
-import {useRouter} from "vue-router";
+import {useRoute, useRouter} from "vue-router";
+import {TeamType} from "../models/team";
 
 const router = useRouter();
+const route = useRoute()
 
-const title = ref('');
-const description = ref('');
+//@ts-ignore
+const team:TeamType = JSON.parse(route.query.team);
+
+const id = ref(team.id);
+const title = ref(team.title);
+const avatarUrl = ref(team.avatarUrl);
+const checked = ref(team.status.toString());
+const expireTime = ref(team.expireTime);
+const description = ref(team.description);
 const password = ref('');
-const number = ref(2);
-const checked = ref('0');
-const expireTime = ref('');
+// const number = ref(team.number);
 
 const withPWD = ref(false);
-
 const showPicker = ref(false);
 
 const onConfirm = ({ selectedValues }) => {
@@ -96,18 +103,28 @@ const onConfirm = ({ selectedValues }) => {
   showPicker.value = false;
 };
 
-const onSubmit = (values) => {
-
+const onSubmit = () => {
   showConfirmDialog({
-    title: "创建队伍",
-    message: "确认提交数据吗?"
+    title: "修改队伍信息",
+    message: "确认提交修改数据吗吗?"
   }).then(() => {
-    myAxios.post("/team/add", values).then((res:BaseResponse) => {
+    myAxios.post(
+        "/team/update",
+        JSON.stringify({
+          id: id.value,
+          title: title.value,
+          // avatarUrl: avatarUrl.value,
+          status: checked.value,
+          expireTime: expireTime.value,
+          description: description.value,
+          password: password.value,
+        }),
+        {headers: {'Content-Type':'application/json'}}).then((res:BaseResponse) => {
       if(res.code === 0){
-        showToast("队伍创建成功!");
+        showToast("成功修改队伍信息!");
         //跳转url
         setTimeout(() => {
-          router.push('/user/myTeams');
+          router.back();
         }, 1000);
       }}).catch(() => {
       // on cancel

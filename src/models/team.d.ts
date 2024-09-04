@@ -1,3 +1,5 @@
+import {UserType} from "./user";
+
 export type TeamType = {
     id: number;
     title: string;
@@ -13,5 +15,6 @@ export type TeamType = {
     showQuit: boolean;
     showDelete: boolean;
     showJoin: boolean;
-    members: number;
+    memberNumber: number;
+    members: UserType[];
 };
