@@ -6,12 +6,20 @@ import UserEdit from "../pages/UserEdit.vue";
 import SearchResultPage from "../pages/SearchResultPage.vue";
 import UserLoginPage from "../pages/UserLoginPage.vue";
 import UserAvatar from "../pages/UserAvatar.vue";
+import UserInfo from "../pages/UserInfo.vue";
+import MyTeams from "../pages/MyTeams.vue";
+import CreateTeam from "../pages/CreateTeam.vue";
+import JoinedTeams from "../pages/JoinedTeams.vue";
 
 
 const routes = [
     {path: '/', title: '主页', component: Index},
     {path: '/team', title: '组队',  component: Team},
-    {path: '/user', title: '个人页',  component: User},
+    {path: '/team/creatTeam', title: '新建队伍',  component: CreateTeam},
+    {path: '/user', title: '个人主页',  component: User},
+    {path: '/user/info', title: '用户信息',  component: UserInfo},
+    {path: '/user/myTeams', title: '我创建的队伍',  component: MyTeams},
+    {path: '/user/joinedTeams', title: '我加入的队伍',  component: JoinedTeams},
     {path: '/search', title: '搜索',  component: Search},
     {path: '/user/edit', title: '信息编辑',  component: UserEdit},
     {path: '/user/list', title: '搜索列表',  component: SearchResultPage},

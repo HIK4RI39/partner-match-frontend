@@ -85,5 +85,7 @@ onMounted(async () => {
 </template>
 
 <style scoped>
-
+#content {
+  padding-bottom: 80px;
+}
 </style>

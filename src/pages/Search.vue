@@ -85,7 +85,7 @@ let tagList = ref(originalTagList);
     <van-search
         v-model="searchText"
         show-action
-        placeholder="请输入搜索关键词"
+        placeholder="请输入搜索关键词/按下enter检索标签"
         @search="onSearch"
         @cancel="onCancel"
     />
