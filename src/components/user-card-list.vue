@@ -13,7 +13,7 @@
         </van-tag>
       </template>
       <template #footer>
-        <van-button size="mini">联系我</van-button>
+        <van-button size="mini" @click="onConnect(user)">联系我</van-button>
       </template>
     </van-card>
   </div>
@@ -21,6 +21,7 @@
 
 <script setup lang="ts">
 import {UserType} from "../models/user";
+import {showDialog} from "vant";
 
 interface UserCardListProps {
   userList: UserType[];
@@ -29,6 +30,15 @@ interface UserCardListProps {
 const props = withDefaults(defineProps<UserCardListProps>(), {
   userList: [] as UserType[],
 });
+
+const onConnect = (user : UserType) => {
+  showDialog({
+    title: '联系方式',
+    message: `电话: ${user.phone}\n邮箱: ${user.email}`,
+  }).then(() => {
+    // on close
+  });
+}
 </script>
 
 <style scoped>

@@ -10,7 +10,7 @@ const getCurrentUserState = () : UserType=> {
     return currentUser;
 }
 
-const updateCurrentUser = (editKey :string, currentValue : string)  => {
+const updateCurrentUser = (editKey :string, currentValue : any)  => {
     switch (editKey){
         case 'username':
             currentUser.username = currentValue;
@@ -28,7 +28,10 @@ const updateCurrentUser = (editKey :string, currentValue : string)  => {
             currentUser.avatarUrl = currentValue;
             return;
         case 'profile':
-            currentUser.profile =currentValue;
+            currentUser.profile = currentValue;
+            return;
+        case 'tags':
+            currentUser.tags = currentValue;
             return;
     }
 }

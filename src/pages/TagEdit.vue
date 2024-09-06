@@ -1,29 +1,12 @@
 <script setup lang="ts">
-import {ref} from "vue";
+import {onMounted, ref} from "vue";
 import {useRouter} from 'vue-router'
+import {showToast} from "vant";
+import {BaseResponse} from "../models/baseResponse";
+import myAxios from "../plugins/myAxios.ts";
+import qs from "qs";
+import {updateCurrentUser} from "../states/user.ts";
 const router = useRouter()
-
-// 搜索文本
-const searchText = ref('');
-
-/**
- * 搜索标签
- */
-const onSearch = () => {
-  tagList.value = originalTagList.map(parentTag => {
-    const tempChildren = [...parentTag.children];
-    const tempParentTag = {...parentTag};
-    tempParentTag.children = tempChildren.filter(item => item.text.includes(searchText.value));
-    return tempParentTag;
-  })};
-
-/**
- * 清空标签搜索
- */
-const onCancel = () => {
-  searchText.value = ''
-  tagList.value = originalTagList
-};
 
 /**
  * 关闭标签
@@ -37,20 +20,54 @@ const doClose = (tag : any) => {
 };
 
 /**
- * 根据标签搜索
+ * 修改标签
  */
-const doSearchResult = () => {
-  //将参数传递给搜索页
-  router.push({
-    path: '/user/list',
-    query: {
-      tags: activeIds.value
+const doSubmit = async () => {
+   await myAxios.get('/user/update/tags', {
+    withCredentials: false,
+    params: {
+      tagNameList: activeIds.value,
+    },
+    paramsSerializer: {
+      serialize: params => qs.stringify(params, { indices: false}),
     }
-  })
+  }).then ((res:BaseResponse) => {
+    if(res?.code === 0){
+      //修改当前用户标签
+
+      showToast("修改成功!");
+
+      updateCurrentUser('tags', activeIds.value);
+
+      setTimeout(() => {
+        router.push("/user/info");
+      }, 1200);
+
+    }else{
+      //显示错误信息
+      showToast(res?.errorMsg);
+    }
+   })
+
 }
 
+// ?
 const activeIds = ref([]);
 const activeIndex = ref(0);
+
+
+onMounted(async () => {
+  // 从后端获取当前用户的标签
+  await myAxios.get('/user/getTags')
+      .then((res:BaseResponse) => {
+        if(res.code === 0){
+          activeIds.value = res.data;
+        }else {
+          showToast(res.errorMsg);
+        }
+      })
+})
+
 const originalTagList = [
   {
     text: '性别',
@@ -92,15 +109,6 @@ let tagList = ref(originalTagList);
 </script>
 
 <template>
-  <form action="/">
-    <van-search
-        v-model="searchText"
-        show-action
-        placeholder="请输入搜索关键词/按下enter检索标签"
-        @search="onSearch"
-        @cancel="onCancel"
-    />
-  </form>
 
   <van-divider content-position="left">已选标签</van-divider>
   <!--如果没有选择标签显示-->
@@ -126,7 +134,7 @@ let tagList = ref(originalTagList);
           position: fixed; bottom: 50px;
           width: 100%;
           text-align: center;">
-    <van-button block type="primary" @click="doSearchResult">搜索</van-button>
+    <van-button block type="primary" @click="doSubmit">提交</van-button>
   </div>
 </template>
 

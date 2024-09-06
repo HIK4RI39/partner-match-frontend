@@ -11,6 +11,7 @@ import MyTeams from "../pages/MyTeams.vue";
 import CreateTeam from "../pages/CreateTeam.vue";
 import JoinedTeams from "../pages/JoinedTeams.vue";
 import TeamEdit from "../pages/TeamEdit.vue";
+import TagEdit from "../pages/TagEdit.vue";
 
 
 const routes = [
@@ -24,6 +25,7 @@ const routes = [
     {path: '/user/joinedTeams', title: '我加入的队伍',  component: JoinedTeams},
     {path: '/search', title: '搜索用户',  component: Search},
     {path: '/user/edit', title: '编辑个人信息',  component: UserEdit},
+    {path: '/user/tag/edit', title: '编辑标签',  component: TagEdit},
     {path: '/user/list', title: '搜索列表',  component: SearchResultPage},
     {path: '/user/login', title: '用户登录',  component: UserLoginPage},
     {path: '/user/avatar', title: '用户上传头像',  component: UserAvatar},
