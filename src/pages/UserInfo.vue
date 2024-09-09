@@ -15,8 +15,6 @@
     <van-cell title="个人标签" :value="user?.tags" @click="() => {router.push('/user/tag/edit')}">
     </van-cell>
 
-    <van-tag type="primary">标签</van-tag>
-
     <van-cell title="注册时间" :value="user?.createTime.toString()" />
   </div>
 

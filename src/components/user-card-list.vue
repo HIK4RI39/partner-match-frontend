@@ -21,7 +21,10 @@
 
 <script setup lang="ts">
 import {UserType} from "../models/user";
-import {showDialog} from "vant";
+import {useRouter} from "vue-router";
+// import {showDialog} from "vant";
+
+const router = useRouter();
 
 interface UserCardListProps {
   userList: UserType[];
@@ -32,12 +35,18 @@ const props = withDefaults(defineProps<UserCardListProps>(), {
 });
 
 const onConnect = (user : UserType) => {
-  showDialog({
-    title: '联系方式',
-    message: `电话: ${user.phone}\n邮箱: ${user.email}`,
-  }).then(() => {
-    // on close
-  });
+  // showDialog({
+  //   title: '联系方式',
+  //   message: `电话: ${user.phone}\n邮箱: ${user.email}`,
+  // }).then(() => {
+  //   // on close
+  // });
+
+  router.push({
+    path: '/user/chat',
+    query: {
+      id: user.id as number,
+    }})
 }
 </script>
 

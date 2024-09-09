@@ -12,6 +12,7 @@ import CreateTeam from "../pages/CreateTeam.vue";
 import JoinedTeams from "../pages/JoinedTeams.vue";
 import TeamEdit from "../pages/TeamEdit.vue";
 import TagEdit from "../pages/TagEdit.vue";
+import Chat from "../pages/User/Chat.vue";
 
 
 const routes = [
@@ -20,6 +21,7 @@ const routes = [
     {path: '/team/edit', title: '队伍编辑',  component: TeamEdit},
     {path: '/team/creatTeam', title: '新建队伍',  component: CreateTeam},
     {path: '/user', title: '个人主页',  component: User},
+    {path: '/user/chat', title: '用户聊天', component:Chat},
     {path: '/user/info', title: '用户信息',  component: UserInfo},
     {path: '/user/myTeams', title: '我创建的队伍',  component: MyTeams},
     {path: '/user/joinedTeams', title: '我加入的队伍',  component: JoinedTeams},
