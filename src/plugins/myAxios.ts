@@ -26,7 +26,9 @@ myAxios.interceptors.response.use(function(response){
         //const path = window.location.pathname;
 
         //跳转到登录页
+
         setTimeout(() => {
+            // useRouter().push('/user/login').then(r => r?.data);
             window.location.href = '/user/login';
         }, 500);
     }

@@ -23,9 +23,9 @@
 <script setup lang="ts">
 import {onMounted, Ref, ref} from "vue";
 import {showToast} from "vant";
-import {GetCurrentUser} from "../services/user.ts";
+import {GetCurrentUser} from "../../services/user.ts";
 import {useRouter} from 'vue-router'
-import {UserType} from "../models/user";
+import {UserType} from "../../models/user";
 
 const router = useRouter()
 const user:Ref<UserType> = ref();

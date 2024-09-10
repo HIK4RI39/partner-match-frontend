@@ -17,10 +17,10 @@
 <script setup lang="ts">
 import {onMounted, ref} from "vue";
 import {showToast} from "vant";
-import {GetCurrentUser} from "../services/user.ts";
+import {GetCurrentUser} from "../../services/user.ts";
 import {useRouter} from 'vue-router'
-import myAxios from "../plugins/myAxios.ts";
-import {BaseResponse} from "../models/baseResponse";
+import myAxios from "../../plugins/myAxios.ts";
+import {BaseResponse} from "../../models/baseResponse";
 
 const router = useRouter()
 const user = ref();

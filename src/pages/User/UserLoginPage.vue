@@ -5,7 +5,7 @@
           v-model="userAccount"
           name="userAccount"
           label="账号"
-          placeholder="请输入用户账号"
+          placeholder="管理员账号:admin | 用户账号:user"
           :rules="[{require: true, message: '账户是必填项'}]"
       />
       <van-field
@@ -13,7 +13,7 @@
           type="password"
           name="userPassword"
           label="密码"
-          :placeholder="`请输入密码密码`"
+          placeholder="默认密码:12345678"
           :rules="[{require: true, message: '密码是必填项'}]"
       />
     </van-cell-group>
@@ -28,10 +28,10 @@
 
 <script setup lang="ts">
 import {ref} from "vue";
-import myAxios from "../plugins/myAxios.ts";
+import myAxios from "../../plugins/myAxios.ts";
 import {showToast} from "vant";
 import {useRouter} from 'vue-router'
-import {BaseResponse} from "../models/baseResponse";
+import {BaseResponse} from "../../models/baseResponse";
 const router = useRouter()
 
 const userAccount = ref('');

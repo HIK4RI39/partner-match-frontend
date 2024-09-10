@@ -19,9 +19,9 @@
 import {ref} from "vue";
 import {useRoute, useRouter} from "vue-router";
 import {showToast} from "vant";
-import myAxios from "../plugins/myAxios.ts";
-import {BaseResponse} from "../models/baseResponse";
-import {updateCurrentUser} from "../states/user.ts";
+import myAxios from "../../plugins/myAxios.ts";
+import {BaseResponse} from "../../models/baseResponse";
+import {updateCurrentUser} from "../../states/user.ts";
 const route = useRoute();
 const router = useRouter();
 

@@ -30,7 +30,7 @@
             round fit="cover" width="30px" height="30px" style="margin-left: 5px"
             :src=otherUser?.avatarUrl
         />
-        {{message?.content}}
+        {{(message?.content).toString().replace("\"","").replace("\"","")}}
 
       </van-cell >
 
@@ -60,76 +60,72 @@
 
 <script setup lang="ts">
 import {onMounted, Ref, ref} from "vue";
-import {GetCurrentUser} from "../../services/user.ts";
 import {showToast} from "vant";
 import {UserType} from "../../models/user";
 import {useRoute} from "vue-router";
 import myAxios from "../../plugins/myAxios.ts";
 import {BaseResponse} from "../../models/baseResponse";
+import {GetCurrentUser} from "../../services/user.ts";
 
 const route = useRoute();
-const {id} = route.query;
 
+const {id} = route.query;
 const currentUser:Ref<UserType> = ref();
 const otherUser:Ref<UserType> = ref();
 
-
 const messages = ref([])
-
-//获取链接时触发
-const onOpen = (e) => {
-  console.log("成功连接!",e)
-};
-
-//接收到服务端推送的消息后触发
-const onMessage = async (event) => {
-  //获取服务器推送过来的消息
-  let dataString = event.data
-  //将dataString转化为json对象
-  let response = JSON.parse(dataString)
-
-  const res = await GetCurrentUser();
-  if(res){
-    currentUser.value = res;
-  }else{
-    showToast("用户未登录");
-  }
-
-  if(response.sender === currentUser.value.id){
-    response["sender"] = 'me'
-  }else{
-    response["sender"] = 'other'
-  }
-  messages.value.push(response)
-};
-
-//
-const onClose = () => {}
-;
-
 const webSocket = ref();
 
-//ws服务器地址
-webSocket.value = new WebSocket('ws://localhost:8081/chat?id='.concat(id))
 
-webSocket.value.onopen = onOpen;
-webSocket.value.onmessage = onMessage;
-webSocket.value.onclose = onClose;
+
+const init = () => {
+  //ws服务器地址
+  // webSocket.value = new WebSocket('ws://localhost:8081/websocket/chat?id='.concat(id).concat("&uid=").concat(currentUser.value.id))
+  // webSocket.value = new WebSocket('ws://user-center:8081/websocket/chat?id='.concat(id).concat("&uid=").concat(currentUser.value.id))
+  webSocket.value = new WebSocket('ws://101.34.76.44:8081/websocket/chat?id='.concat(id).concat("&uid=").concat(currentUser.value.id))
+
+  webSocket.value.onopen = (e) => {
+    console.log("成功连接!",e)
+  };
+  webSocket.value.onmessage = (event) => {
+    //获取服务器推送过来的消息
+    let dataString = event.data
+    //将dataString转化为json对象
+    let response = JSON.parse(dataString)
+    if(response.sender === currentUser.value.id){
+      response["sender"] = 'me'
+    }else{
+      response["sender"] = 'other'
+    }
+    messages.value.push(response)
+  };
+
+  webSocket.value.onclose = (e) => {
+    console.log("链接已关闭!",e)
+  };
+
+  webSocket.value.onerror = (e) => {
+    console.log("发生错误: ",e)
+  };
+}
 
 onMounted(async () => {
-  //获取当前用户
   const res = await GetCurrentUser();
   if(res){
     currentUser.value = res;
+    init();
   }else{
     showToast("用户未登录");
   }
 
-  myAxios.get('/user/avatarUrl/'+id?.toString()).then((res:BaseResponse) => {
+
+  myAxios.get('/user/avatarUrl/'+id).then((res:BaseResponse) => {
     if(res.code===0){
       otherUser.value = res.data
     }})
 });
+
+
 
 const text = ref('');
 

@@ -22,6 +22,9 @@
 <script setup lang="ts">
 import {UserType} from "../models/user";
 import {useRouter} from "vue-router";
+import {onMounted, ref, Ref} from "vue";
+import {GetCurrentUser} from "../services/user.ts";
+import {showToast} from "vant";
 // import {showDialog} from "vant";
 
 const router = useRouter();
@@ -29,6 +32,9 @@ const router = useRouter();
 interface UserCardListProps {
   userList: UserType[];
 }
+
+const currentUser:Ref<UserType> = ref();
+var uid:number;
 
 const props = withDefaults(defineProps<UserCardListProps>(), {
   userList: [] as UserType[],
@@ -48,6 +54,17 @@ const onConnect = (user : UserType) => {
       id: user.id as number,
     }})
 }
+
+
+onMounted(async () => {
+  const res = await GetCurrentUser();
+  if(res){
+    currentUser.value = res;
+  }else{
+    showToast("用户未登录");
+  }
+})
+
 </script>
 
 <style scoped>
