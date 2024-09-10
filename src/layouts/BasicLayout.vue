@@ -22,8 +22,9 @@
     <div style="height: 5rem;">
       <van-tabbar route v-model="active" >
         <van-tabbar-item icon="home-o" name="index" replace to="/">主页</van-tabbar-item>
-        <van-tabbar-item icon="search" name="team" replace to="/team">队伍</van-tabbar-item>
-        <van-tabbar-item icon="friends-o" name="user" replace to="/user">个人</van-tabbar-item>
+        <van-tabbar-item icon="search" name="teamSearch" replace to="/team">组队</van-tabbar-item>
+        <van-tabbar-item icon="friends-o" name="team" replace to="/team/chatRoom">群聊</van-tabbar-item>
+        <van-tabbar-item icon="user-o" name="user" replace to="/user">个人</van-tabbar-item>
       </van-tabbar>
     </div>
 

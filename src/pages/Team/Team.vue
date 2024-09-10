@@ -28,7 +28,6 @@
       </van-form>
     </van-dialog>
 
-
     <van-card
         v-for="team in teamList"
         :title="`${team.title}`"
@@ -36,16 +35,36 @@
         :tag="`${team.number}人`"
         :thumb="team.avatarUrl"
     >
+
       <template #tags>
         <van-tag plain type="primary" v-if="team.status===0">公开</van-tag>
         <van-tag plain type="danger" v-if="team.status===1">加密</van-tag>
         <van-tag plain type="success" v-if="team.status===2">私有</van-tag>
-      </template>
-      <template #bottom>
-        队伍人数: {{team.memberNumber}}/{{team.number}}
 
+        <van-tag
+            plain type="danger"
+            v-if="team.number===team.memberNumber"
+            style="margin-left: 3px">
+          已满
+        </van-tag>
+
+        <van-space v-for="user in team.members">
+          <van-tag plain type="primary" v-if="user.id === team.userId" style="margin-left: 10px">
+            队长:{{user.username}}
+          </van-tag>
+        </van-space>
+
+
+
+      </template>
+      <template #bottom >
+
+        队伍人数: {{team.memberNumber}}/{{team.number}}
+        <br>
+        创建时间: {{team.createTime}}
         <br>
         过期时间: {{team.expireTime}}
+
       </template>
 
       <template  #num>
@@ -101,12 +120,12 @@
 
 <script setup lang="ts">
 import {onMounted, Ref, ref} from "vue";
-import {TeamType} from "../models/team";
-import myAxios from "../plugins/myAxios.ts";
+import {TeamType} from "../../models/team";
+import myAxios from "../../plugins/myAxios.ts";
 import {showConfirmDialog,showToast} from "vant";
-import {UserType} from "../models/user";
-import {GetCurrentUser} from "../services/user.ts";
-import {BaseResponse} from "../models/baseResponse";
+import {UserType} from "../../models/user";
+import {GetCurrentUser} from "../../services/user.ts";
+import {BaseResponse} from "../../models/baseResponse";
 import {useRouter} from "vue-router";
 
 const teamList:Ref<TeamType[]> = ref([]);
@@ -269,5 +288,6 @@ onMounted(async () => {
 #content {
   padding-bottom: 150px;
 }
+
 </style>
 

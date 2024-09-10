@@ -2,37 +2,63 @@
   <van-row>
     <van-col span="24">
       <van-cell
-          :title= otherUser?.username
+          :title="`${title}(${memberNumber})`"
           style="background: #213547; text-align: center; color: white"/>
     </van-col>
   </van-row>
 
   <div >
     <van-list v-for="message in messages">
-
-      <van-row type="fixed" justify="end"
-      style="margin-bottom: 10px">
-        <van-cell class="message-me" v-if="message.sender==='me'">
-          <span style="color: #242121">
+      <!--展示自己发送的信息-->
+      <van-row type="fixed" justify="end" style="margin-top: 10px;margin-right: 10px" v-if="message.sender===currentUser?.id">
+        <!--用户名-->
+        <van-cell>
+          <span style="color: #242121;font-weight: bold;">
+            {{currentUser?.username}}
+          </span>
+        </van-cell>
+        <!--发送时间-->
+        <span style="font-size: 11px; margin-top: 20px; margin-right: 5px">
+          {{timer(message.sendTime)}}
+        </span>
+        <!--内容-->
+        <van-cell class="message-me" >
+          <span style="color: #242121; font-size: 15px">
             {{(message?.content).toString().replace("\"","").replace("\"","")}}
           </span>
-          <van-image
-              round fit="cover" width="30px" height="30px" style="margin-left: 5px"
-              :src=currentUser?.avatarUrl
-          />
         </van-cell>
+        <!--头像-->
+        <van-image round fit="cover" width="30px" height="30px" style="margin-left: 5px" :src=currentUser?.avatarUrl />
       </van-row>
 
+    <van-space v-if="message.sender!==currentUser?.id" v-for="user in members">
+        <van-space v-if="user?.id === message.sender">
+          <van-row style="margin-top: 10px; margin-left: 10px" >
+            <!--用户名-->
+            <van-cell>
+          <span style="color: #242121; font-weight: bold;float: left;">
+            {{user?.username}}
+          </span>
+            </van-cell>
+            <!--头像-->
+            <van-image
+                round fit="cover" width="30px" height="30px" style="margin-left: 5px"
+                :src=user?.avatarUrl
+            />
+            <!--内容-->
+            <van-cell class="message-other" >
+          <span style="color: #242121; font-size: 15px">
+            {{(message?.content).toString().replace("\"","").replace("\"","")}}
+          </span>
+            </van-cell>
+            <!--发送时间-->
+            <span style="font-size: 11px; margin-top: 20px; margin-right: 5px">
+          {{timer(message.sendTime)}}
+        </span>
+          </van-row>
+      </van-space>
+    </van-space>
 
-
-      <van-cell class="message-other" v-if="message.sender!=='me'">
-        <van-image
-            round fit="cover" width="30px" height="30px" style="margin-left: 5px"
-            :src=otherUser?.avatarUrl
-        />
-        {{(message?.content).toString().replace("\"","").replace("\"","")}}
-
-      </van-cell >
 
     </van-list >
   </div>
@@ -54,8 +80,6 @@
     </van-cell-group>
   </div>
 
-
-
 </template>
 
 <script setup lang="ts">
@@ -63,53 +87,65 @@ import {onMounted, Ref, ref} from "vue";
 import {showToast} from "vant";
 import {UserType} from "../../models/user";
 import {useRoute} from "vue-router";
-import myAxios from "../../plugins/myAxios.ts";
-import {BaseResponse} from "../../models/baseResponse";
 import {GetCurrentUser} from "../../services/user.ts";
 
 const route = useRoute();
 
-const {id} = route.query;
+const timer = (time:number) => {
+  var date = new Date(time + 8 * 3600 * 1000); // 增加8小时
+  return date.toJSON().substring(0, 19).replace('T', ' ');
+}
+
+
+const {teamId} = route.query;
+const memberNumber = ref(route.query.memberNumber);
+const title = ref(route.query.title);
 const currentUser:Ref<UserType> = ref();
-const otherUser:Ref<UserType> = ref();
+
+const members:Ref<UserType> = ref(JSON.parse(route.query.members));
 
 const messages = ref([])
 const webSocket = ref();
 
-
-
 const init = () => {
   //ws服务器地址
-  // webSocket.value = new WebSocket('ws://localhost:8081/websocket/chat?id='.concat(id).concat("&uid=").concat(currentUser.value.id))
-  // webSocket.value = new WebSocket('ws://user-center:8081/websocket/chat?id='.concat(id).concat("&uid=").concat(currentUser.value.id))
-  webSocket.value = new WebSocket('ws://101.34.76.44:8081/websocket/chat?id='.concat(id).concat("&uid=").concat(currentUser.value.id))
+  webSocket.value = new WebSocket(`ws://localhost:8081/websocket/chat?uid=${currentUser.value.id}&teamId=${teamId}`)
+  // webSocket.value = new WebSocket(`ws://101.34.76.44:8081/websocket/chat?uid=${currentUser.value.id}&teamId={}`)
 
+  //连接提示
   webSocket.value.onopen = (e) => {
     console.log("成功连接!",e)
   };
+
+  //发送/接收消息
   webSocket.value.onmessage = (event) => {
+    console.log(event);
+
     //获取服务器推送过来的消息
     let dataString = event.data
     //将dataString转化为json对象
     let response = JSON.parse(dataString)
-    if(response.sender === currentUser.value.id){
-      response["sender"] = 'me'
-    }else{
-      response["sender"] = 'other'
-    }
+
+    // if(response.sender === currentUser.value.id){
+    //   response["sender"] = 'me'
+    // }else{
+    //   response["sender"] = 'other'
+    // }
+
     messages.value.push(response)
   };
-
+  //连接关闭
   webSocket.value.onclose = (e) => {
     console.log("链接已关闭!",e)
   };
-
+  //连接错误
   webSocket.value.onerror = (e) => {
     console.log("发生错误: ",e)
   };
 }
 
 onMounted(async () => {
+  //校验登录
   const res = await GetCurrentUser();
   if(res){
     currentUser.value = res;
@@ -118,37 +154,21 @@ onMounted(async () => {
     showToast("用户未登录");
   }
 
-
-  myAxios.get('/user/avatarUrl/'+id).then((res:BaseResponse) => {
-    if(res.code===0){
-      otherUser.value = res.data
-    }})
+  //校验是否是队伍成员(或者管理员)
 });
-
-
 
 const text = ref('');
 
+//向后端发送消息
 const onSend = (msg:string) => {
   msg = msg.trim();
-
   if(msg===null || msg===''){
     showToast("请勿发送空白信息");
     return;
   }
-
-  //向后端发送消息
   webSocket.value.send(JSON.stringify(msg))
-
   text.value = "";
-
-
 }
-
-
-
-
-
 </script>
 
 <style scoped>
@@ -174,8 +194,6 @@ const onSend = (msg:string) => {
   padding: 6px 12px;
   border-radius: 4px;
 }
-
-
 
 .bottom {
   position: fixed;

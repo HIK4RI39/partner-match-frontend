@@ -39,12 +39,12 @@
 
 <script setup lang="ts">
 import {onMounted, Ref, ref} from "vue";
-import {TeamType} from "../models/team";
-import myAxios from "../plugins/myAxios.ts";
+import {TeamType} from "../../models/team";
+import myAxios from "../../plugins/myAxios.ts";
 import {showConfirmDialog,showToast} from "vant";
-import {UserType} from "../models/user";
-import {GetCurrentUser} from "../services/user.ts";
-import {BaseResponse} from "../models/baseResponse";
+import {UserType} from "../../models/user";
+import {GetCurrentUser} from "../../services/user.ts";
+import {BaseResponse} from "../../models/baseResponse";
 import {useRouter} from "vue-router";
 
 const router = useRouter();

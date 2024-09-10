@@ -72,8 +72,8 @@
 <script setup lang="ts">
 import {ref} from "vue";
 import {showConfirmDialog, showToast} from "vant";
-import myAxios from "../plugins/myAxios.ts";
-import {BaseResponse} from "../models/baseResponse";
+import myAxios from "../../plugins/myAxios.ts";
+import {BaseResponse} from "../../models/baseResponse";
 import {useRouter} from "vue-router";
 
 const router = useRouter();
